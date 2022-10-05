@@ -29,7 +29,7 @@ export default function Home() {
   /** Variables to keep track of amount */
   // `ethBalance` keeps track of the amount of Eth held by the user's account
   const [ethBalance, setEtherBalance] = useState(zero);
-  // `reservedCD` keeps track of the Crypto Dev tokens Reserve balance in the Exchange contract
+  // `reservedCD` keeps track of the WST tokens Reserve balance in the Exchange contract
   const [reservedWST, setReservedWST] = useState(zero);
   // Keeps track of the ether balance in the contract
   const [etherBalanceContract, setEtherBalanceContract] = useState(zero);
@@ -46,7 +46,7 @@ export default function Home() {
   const [addWSTTokens, setAddWSTTokens] = useState(zero);
   // removeEther is the amount of `Ether` that would be sent back to the user based on a certain number of `LP` tokens
   const [removeEther, setRemoveEther] = useState(zero);
-  // removeCD is the amount of `Crypto Dev` tokens that would be sent back to the user based on a certain number of `LP` tokens
+  // removeCD is the amount of `WST` tokens that would be sent back to the user based on a certain number of `LP` tokens
   // that he wants to withdraw
   const [removeWst, setRemoveWst] = useState(zero);
   // amount of LP tokens that the user wants to remove from liquidity
@@ -57,8 +57,8 @@ export default function Home() {
   // This keeps track of the number of tokens that the user would receive after a swap completes
   const [tokenToBeReceivedAfterSwap, settokenToBeReceivedAfterSwap] =
     useState(zero);
-  // Keeps track of whether  `Eth` or `Crypto Dev` token is selected. If `Eth` is selected it means that the user
-  // wants to swap some `Eth` for some `Crypto Dev` tokens and vice versa if `Eth` is not selected
+  // Keeps track of whether  `Eth` or `WST` token is selected. If `Eth` is selected it means that the user
+  // wants to swap some `Eth` for some `WST` tokens and vice versa if `Eth` is not selected
   const [ethSelected, setEthSelected] = useState(true);
 
   const getProviderOrSigner = async (needSigner = false) => {
@@ -113,7 +113,7 @@ export default function Home() {
       const swapAmountWei = utils.parseEther(swapAmount);
 
       setLoading(true);
-      if (!swapAmount.eq(zero)) {
+      if (!swapAmountWei.eq(zero)) {
         const signer = await getProviderOrSigner(true);
         await swapTokens(
           signer,
@@ -203,7 +203,7 @@ export default function Home() {
 
       const { _removeEther, _removeWST } = await getTokensAfterRemove(
         provider,
-        removeLPTokens,
+        removeLpTokensWei,
         _ethBal,
         _wstToken
       );
@@ -323,8 +323,10 @@ export default function Home() {
               <div className={styles.inputDiv}>
                 {/* Convert the BigNumber to string using the formatEther function from ethers.js */}
                 {`You will get ${utils.formatEther(
-                  removeWst
-                )} WST Tokens and ${utils.formatEther(removeEther)} Eth`}
+                  removeWst || zero
+                )} WST Tokens and ${utils.formatEther(
+                  removeEther || zero
+                )} Eth`}
               </div>
               <button className={styles.button1} onClick={_removeLiquidity}>
                 Remove
@@ -359,7 +361,7 @@ export default function Home() {
             }}
           >
             <option value="eth">Ethereum</option>
-            <option value="cryptoDevToken">WST Token</option>
+            <option value="wstToken">WST Token</option>
           </select>
           <br />
           <div className={styles.inputDiv}>
@@ -367,12 +369,12 @@ export default function Home() {
             {ethSelected
               ? `You will get ${utils.formatEther(
                   tokenToBeReceivedAfterSwap
-                )} Crypto Dev Tokens`
+                )} WST Tokens`
               : `You will get ${utils.formatEther(
                   tokenToBeReceivedAfterSwap
                 )} Eth`}
           </div>
-          <button className={styles.button1} onClick={_swapTokens}>
+          <button className={styles.button1} onClick={swap}>
             Swap
           </button>
         </div>
