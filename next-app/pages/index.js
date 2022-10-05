@@ -292,7 +292,7 @@ export default function Home() {
                     const _addWSTTokens = await calculateWST(
                       e.target.value || "0",
                       etherBalanceContract,
-                      reservedCD
+                      reservedWST
                     );
                     setAddWSTTokens(_addWSTTokens);
                   }}
